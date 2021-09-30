@@ -14,7 +14,7 @@ const chalk = require('chalk');
 async function getCards() {
     const myCards = await user.getPlayerCards(process.env.ACCOUNT.split('@')[0]) //split to prevent email use
     return myCards;
-} 
+}
 
 async function getQuest() {
     return quests.getPlayerQuest(process.env.ACCOUNT.split('@')[0])
@@ -30,14 +30,14 @@ async function closePopups(page) {
 }
 
 async function startBotPlayMatch(page, myCards, quest) {
-    
+
     console.log( new Date().toLocaleString())
     if(myCards) {
         console.log(process.env.ACCOUNT, ' deck size: '+myCards.length)
     } else {
         console.log(process.env.ACCOUNT, ' playing only basic cards')
     }
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36');
     await page.setViewport({
         width: 1800,
         height: 1500,
@@ -60,7 +60,7 @@ async function startBotPlayMatch(page, myCards, quest) {
             throw new Error('Login Error');
         });
     }
-    
+
 
     await page.waitForTimeout(8000);
     await closePopups(page);
@@ -92,7 +92,7 @@ async function startBotPlayMatch(page, myCards, quest) {
 
     //if quest done claim reward. default to true. to deactivate daily quest rewards claim, set CLAIM_DAILY_QUEST_REWARD false in the env file
     console.log('Quest details: ', quest);
-    const isClaimDailyQuestMode = process.env.CLAIM_DAILY_QUEST_REWARD === 'false' ? false : true; 
+    const isClaimDailyQuestMode = process.env.CLAIM_DAILY_QUEST_REWARD === 'false' ? false : true;
     if (isClaimDailyQuestMode === true) {
         try {
             await page.waitForSelector('#quest_claim_btn', { timeout: 5000 })
@@ -175,7 +175,7 @@ async function startBotPlayMatch(page, myCards, quest) {
         console.log('Error:', matchDetails, possibleTeams)
         throw new Error('NO TEAMS available to be played');
     }
-    
+
     //TEAM SELECTION
     const teamToPlay = await ask.teamSelection(possibleTeams, matchDetails, quest);
 
@@ -245,7 +245,7 @@ async function startBotPlayMatch(page, myCards, quest) {
 // 30 MINUTES INTERVAL BETWEEN EACH MATCH (if not specified in the .env file)
 const sleepingTimeInMinutes = process.env.MINUTES_BATTLES_INTERVAL || 30;
 const sleepingTime = sleepingTimeInMinutes * 60000;
-const isHeadlessMode = process.env.HEADLESS === 'false' ? false : true; 
+const isHeadlessMode = process.env.HEADLESS === 'false' ? false : true;
 
 
 
@@ -269,7 +269,7 @@ const isHeadlessMode = process.env.HEADLESS === 'false' ? false : true;
             console.log('getting user cards collection from splinterlands API...')
             const myCards = await getCards()
                 .then((x)=>{console.log('cards retrieved'); return x})
-                .catch(()=>console.log('cards collection api didnt respond. Did you use username? avoid email!')); 
+                .catch(()=>console.log('cards collection api didnt respond. Did you use username? avoid email!'));
             console.log('getting user quest info from splinterlands API...')
             const quest = await getQuest();
             if(!quest) {
@@ -277,7 +277,7 @@ const isHeadlessMode = process.env.HEADLESS === 'false' ? false : true;
             }
             await startBotPlayMatch(page, myCards, quest)
                 .then(() => {
-                    console.log('Closing battle', new Date().toLocaleString());        
+                    console.log('Closing battle', new Date().toLocaleString());
                 })
                 .catch((e) => {
                     console.log(e)
